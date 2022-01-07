@@ -17,6 +17,15 @@ class DatasetSchema(BaseSchema):
         Dataset wide checks, by default None
     '''
 
+    _json_schema = {
+        'type': 'object',
+        'properties': {
+            'data_vars': {'type': 'object'},
+            'coords': {'type': 'object'},
+            'attrs': {'type': 'object'},
+        },
+    }
+
     def __init__(
         self,
         data_vars: Dict[Hashable, Union[DataArraySchema, None]] = None,
@@ -29,6 +38,10 @@ class DatasetSchema(BaseSchema):
         self.coords = coords
         self.attrs = attrs
         self.checks = checks
+
+    @classmethod
+    def from_json(cls, obj: dict):
+        return cls(**obj)
 
     def validate(self, ds: xr.Dataset) -> None:
         '''Check if the Dataset complies with the Schema.
